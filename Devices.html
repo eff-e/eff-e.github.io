@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ef — My Devices</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          fontFamily: {
+            comic: ['"Comic Neue"', 'cursive', 'sans-serif'],
+            sans: ['"Comic Neue"', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 45%, #6a11cb 100%);
+      --card-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(238, 232, 255, 0.92));
+      --card-border: rgba(255, 255, 255, 0.45);
+      --card-shadow: 0 10px 30px rgba(20, 10, 60, 0.30);
+      --text-primary: #1e1b4b;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --subbox-bg: rgba(238, 232, 255, 0.75);
+      --subbox-border: rgba(139, 92, 246, 0.22);
+      --header-bg: rgba(30, 60, 114, 0.72);
+      --header-border: rgba(255, 255, 255, 0.22);
+      --stage-bg: linear-gradient(180deg, rgba(224, 195, 252, 0.35), rgba(194, 233, 251, 0.35));
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #3b0764 100%);
+        --card-bg: linear-gradient(145deg, rgba(30, 27, 75, 0.88), rgba(46, 16, 101, 0.88));
+        --card-border: rgba(167, 139, 250, 0.25);
+        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+        --text-primary: #ffffff;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --subbox-bg: rgba(15, 23, 42, 0.65);
+        --subbox-border: rgba(167, 139, 250, 0.20);
+        --header-bg: rgba(15, 23, 42, 0.78);
+        --header-border: rgba(167, 139, 250, 0.22);
+        --stage-bg: linear-gradient(180deg, rgba(15, 23, 42, 0.45), rgba(30, 27, 75, 0.65));
+      }
+    }
+
+    body {
+      font-family: 'Comic Neue', 'Inter', system-ui, sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: #ffffff;
+      overflow-x: hidden;
+      transition: background 0.35s ease, color 0.25s ease;
+    }
+
+    @keyframes fadeInTitle {
+      from {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeInContainer {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ef-gradient-title {
+      background: linear-gradient(90deg, #a8edea 0%, #c2e9fb 50%, #e0c3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.25));
+      animation: fadeInTitle 0.7s ease-out forwards;
+    }
+
+    .ef-glass-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      color: var(--text-primary);
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
+    }
+
+    .ef-subbox {
+      background: var(--subbox-bg);
+      border: 1px solid var(--subbox-border);
+    }
+
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.25rem;
+      animation: fadeInContainer 0.55s ease-out forwards;
+    }
+    @media (max-width: 1100px) {
+      .device-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 820px) {
+      .device-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 520px) {
+      .device-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+    }
+
+    .device-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(168, 237, 234, 0.65);
+      box-shadow: 0 16px 32px rgba(20, 10, 60, 0.45);
+    }
+
+    .text-theme-primary { color: var(--text-primary); }
+    .text-theme-secondary { color: var(--text-secondary); }
+    .text-theme-muted { color: var(--text-muted); }
+    .device-stage { background: var(--stage-bg); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-purple-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-30 backdrop-blur-xl border-b transition-colors" style="background: var(--header-bg); border-color: var(--header-border);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Top-Left: Ef Name Only (No Avatar) -->
+      <div class="flex items-center gap-3.5">
+        <button id="brandResetBtn" type="button" class="group flex items-center gap-3 text-left focus:outline-none" title="Scroll to Top">
+          <div>
+            <span class="text-3xl sm:text-4xl font-bold tracking-tight ef-gradient-title">Ef</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Top-Right: My Devices Collection Label Only -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <div class="text-right">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight ef-gradient-title flex items-center justify-end gap-2">
+            <span>My Devices</span>
+          </h1>
+          <p class="text-xs text-blue-100/90 font-bold" id="headerCountLabel">49 Devices in Collection</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT: Devices Grid -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Device Grid -->
+    <div id="devicesGrid" class="device-grid"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t py-6 mt-10 backdrop-blur-md" style="background: var(--header-bg); border-color: var(--header-border);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center text-xs text-blue-100/90 font-bold">
+      <span>Ef • My Devices Collection</span>
+    </div>
+  </footer>
+
+  <script>
+    // 49 devices, sorted alphabetically by brand (Apple → CMF → Google → HP → HTC → Huawei → LGE → Microsoft → Nintendo → Nokia → Samsung → Sony Ericsson → Xiaomi)
+    const DEFAULT_DEVICES = [
+      // Apple
+      { id: 1, name: "Apple iPhone 13 Mini", codename: "iPhone14,4", brand: "Apple", rom: "iOS 18", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone14,4/Midnight.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone14,4/Midnight.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-mini-01.jpg&output=png", "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-mini-01.jpg"] },
+      { id: 2, name: "Apple iPhone 11 Pro", codename: "iPhone12,3", brand: "Apple", rom: "iOS 18", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone12,3/Midnight%20Green.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone12,3/Midnight%20Green.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-11-pro-max-.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11-pro-max-.jpg"] },
+      { id: 3, name: "Apple iPhone Xs Max", codename: "iPhone11,6", brand: "Apple", rom: "iOS 16", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone11,6/Gold.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone11,6/Gold.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-xs-max-new1.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-xs-max-new1.jpg"] },
+      { id: 4, name: "Apple iPhone 7", codename: "iPhone9,1", brand: "Apple", rom: "iOS 15", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone9,1/Black.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone9,1/Black.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg"] },
+      { id: 5, name: "Apple iPhone 6 Plus", codename: "iPhone7,1", brand: "Apple", rom: "iOS 12", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone7,1/Space%20Gray.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone7,1/Space%20Gray.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus2.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus2.jpg"] },
+      { id: 6, name: "Apple iPhone 5c", codename: "iPhone5,3", brand: "Apple", rom: "iOS 10", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone5,3/Blue.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone5,3/Blue.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c-new2.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c-new2.jpg"] },
+      { id: 7, name: "Apple iPhone 5c", codename: "iPhone5,3", brand: "Apple", rom: "iOS 8", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone5,3/Green.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone5,3/Green.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c-new2.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c-new2.jpg"] },
+      { id: 8, name: "Apple iPhone 5s", codename: "iPhone6,1", brand: "Apple", rom: "iOS 10", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone6,1/Space%20Gray.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone6,1/Space%20Gray.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s-ofic.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s-ofic.jpg"] },
+      { id: 9, name: "Apple iPhone 5s", codename: "iPhone6,1", brand: "Apple", rom: "iOS 9", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone6,1/Gold.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone6,1/Gold.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s-ofic.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s-ofic.jpg"] },
+      { id: 10, name: "Apple iPhone 5", codename: "iPhone5,1", brand: "Apple", rom: "iOS 8.4.1-6.1.4", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone5,1/Black%20%26%20Slate.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone5,1/Black%20%26%20Slate.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-5-ofic.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5-ofic.jpg"] },
+      { id: 11, name: "Apple iPhone 5", codename: "iPhone5,1", brand: "Apple", rom: "iOS 10", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone5,1/White%20%26%20Silver.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone5,1/White%20%26%20Silver.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-5-ofic.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5-ofic.jpg"] },
+      { id: 12, name: "Apple iPhone 4", codename: "iPhone3,1", brand: "Apple", rom: "iOS 6", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone3,1/Black.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone3,1/Black.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-4-ofic-final.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4-ofic-final.jpg"] },
+      { id: 13, name: "Apple iPhone 4", codename: "iPhone3,1", brand: "Apple", rom: "iOS 6", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone3,1/White.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone3,1/White.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-4-ofic-final.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4-ofic-final.jpg"] },
+      { id: 14, name: "Apple iPhone 4", codename: "iPhone3,1", brand: "Apple", rom: "iOS 4", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone3,1/Black.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone3,1/Black.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-4-ofic-final.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4-ofic-final.jpg"] },
+      { id: 15, name: "Apple iPhone 3GS", codename: "iPhone2,1", brand: "Apple", rom: "iOS 6", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPhone2,1/Black.png", fallbacks: ["https://img.appledb.dev/device@main/iPhone2,1/Black.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs-ofic.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs-ofic.jpg"] },
+      { id: 16, name: "Apple iPad 1 16GB-WiFi", codename: "iPad1,1", brand: "Apple", rom: "iOS 7", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPad1,1/Black.png", fallbacks: ["https://img.appledb.dev/device@main/iPad1,1/Black.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/pics/apple/ipad-3-001.jpg&output=png", "https://fdn2.gsmarena.com/vv/pics/apple/ipad-3-001.jpg"] },
+      { id: 17, name: "Apple iPad 3 16GB-Cellular", codename: "iPad3,2", brand: "Apple", rom: "iOS 8", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPad3,2/Black.png", fallbacks: ["https://img.appledb.dev/device@main/iPad3,2/Black.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/pics/apple/ipad-3-001.jpg&output=png", "https://fdn2.gsmarena.com/vv/pics/apple/ipad-3-001.jpg"] },
+      { id: 18, name: "Apple iPad Mini 1 32GB-Cellular", codename: "iPad2,6", brand: "Apple", rom: "iOS 8-6", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPad2,6/Black%20%26%20Slate.png", fallbacks: ["https://img.appledb.dev/device@256/iPad2,6/Space%20Gray.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-ipad-mini-final.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-mini-final.jpg"] },
+      { id: 19, name: "Apple iPad Air (1st Generation)", codename: "iPad4,1", brand: "Apple", rom: "iOS 7", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPad4,1/Space%20Gray.png", fallbacks: ["https://img.appledb.dev/device@main/iPad4,1/Space%20Gray.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-ipad-air.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-air.jpg"] },
+      { id: 20, name: "Apple iPad Air (1st Generation)", codename: "iPad4,1", brand: "Apple", rom: "iOS 12", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPad4,1/Silver.png", fallbacks: ["https://img.appledb.dev/device@main/iPad4,1/Silver.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-ipad-air.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-air.jpg"] },
+      { id: 21, name: "Apple iPad A16 128GB-WiFi", codename: "iPad15,3", brand: "Apple", rom: "iOS 18", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/iPad15,7/Blue.png", fallbacks: ["https://img.appledb.dev/device@256/iPad15,3/Space%20Gray.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-ipad-10-2022.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-10-2022.jpg"] },
+      { id: 22, name: "Apple MacBook Pro (Early 2015)", codename: "MacBookPro12,1", brand: "Apple", rom: "macOS", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/MacBookPro12,1/Silver.png", fallbacks: ["https://img.appledb.dev/device@main/MacBookPro12,1/Silver.png", "https://upload.wikimedia.org/wikipedia/commons/7/76/MacBook_Pro.png"] },
+      { id: 23, name: "Apple MacBook Air M4", codename: "Mac16,12", brand: "Apple", rom: "macOS Golden Gate", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/Mac16,12/Sky%20Blue.png", fallbacks: ["https://img.appledb.dev/device@256/Mac16,12/Midnight.png", "https://upload.wikimedia.org/wikipedia/commons/8/87/MacBook_Air_(3rd_generation,_space_gray).png"] },
+      { id: 24, name: "Apple Watch 3rd Generation", codename: "Watch3,1", brand: "Apple", rom: "WatchOS 8", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/Watch3,1/0.png", fallbacks: ["https://img.appledb.dev/device@main/Watch3,1/0.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-watch-series3-.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-watch-series3-.jpg"] },
+      { id: 25, name: "Apple Watch SE 1st Generation", codename: "Watch5,1", brand: "Apple", rom: "WatchOS 10", status: "Stock • Official", imageUrl: "https://img.appledb.dev/device@256/Watch5,9/Space%20Gray.png", fallbacks: ["https://img.appledb.dev/device@256/Watch5,1/Space%20Gray.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/apple-watch-se.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/apple-watch-se.jpg"] },
+
+      // CMF
+      { id: 26, name: "CMF By Nothing Phone (1)", codename: "tetris", brand: "CMF", rom: "Android 16", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/nothing-cmf-phone-1-ofic.jpg&output=png", fallbacks: ["https://wiki.lineageos.org/images/devices/tetris.png", "https://fdn2.gsmarena.com/vv/bigpic/nothing-cmf-phone-1-ofic.jpg"] },
+
+      // Google
+      { id: 27, name: "Google Pixel 4", codename: "flame", brand: "Google", rom: "Android 10", status: "Stock • Official", imageUrl: "https://wiki.lineageos.org/images/devices/flame.png", fallbacks: ["https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/google-pixel-4-r1.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-4-r1.jpg"] },
+
+      // HP
+      { id: 28, name: "HP TouchPad", codename: "tenderloin", brand: "HP", rom: "Cyanogenmod 12- WebOS", status: "Custom • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/hp-touch-pad-new.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/hp-touch-pad-new.jpg", "https://fdn2.gsmarena.com/vv/pics/hp/hp-touch-pad-1.jpg"] },
+
+      // HTC
+      { id: 29, name: "HTC One M9", codename: "hima", brand: "HTC", rom: "Android 12", status: "Custom • Official", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/bf/HTC_One_M9.png", fallbacks: ["https://wiki.lineageos.org/images/devices/himaul.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/htc-one-m9-1.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/htc-one-m9-1.jpg"] },
+      { id: 30, name: "HTC HD2", codename: "leo", brand: "HTC", rom: "Windows Phone 7", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/htc-hd2-new.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/htc-hd2-new.jpg"] },
+
+      // Huawei
+      { id: 31, name: "Huawei Nexus 6P", codename: "angler", brand: "Huawei", rom: "Android 7", status: "Stock • Official", imageUrl: "https://wiki.lineageos.org/images/devices/angler.png", fallbacks: ["https://upload.wikimedia.org/wikipedia/commons/f/f6/Nexus_6P_%E6%A8%A1%E5%9E%8B.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/huawei-nexus-6p-.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/huawei-nexus-6p-.jpg"] },
+      { id: 32, name: "Huawei Nexus 6P (2)", codename: "angler", brand: "Huawei", rom: "Android 7", status: "Stock • Official", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nexus_6P_%E6%A8%A1%E5%9E%8B.png", fallbacks: ["https://wiki.lineageos.org/images/devices/angler.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/huawei-nexus-6p-.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/huawei-nexus-6p-.jpg"] },
+      { id: 33, name: "Huawei Mate 20", codename: "hima", brand: "Huawei", rom: "HarmonyOS 4", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/huawei-mate-20-.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/huawei-mate-20-.jpg"] },
+
+      // LGE
+      { id: 34, name: "LGE Nexus 5X", codename: "bullhead", brand: "LGE", rom: "Android 12", status: "Custom • Official", imageUrl: "https://wiki.lineageos.org/images/devices/bullhead.png", fallbacks: ["https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/lg-nexus-5x-.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/lg-nexus-5x-.jpg"] },
+
+      // Microsoft
+      { id: 35, name: "Microsoft Lumia 950", codename: "RM-1104", brand: "Microsoft", rom: "WP 10", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/microsoft-lumia-950-1.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/microsoft-lumia-950-1.jpg"] },
+      { id: 36, name: "Microsoft Lumia 640", codename: "RM-1072", brand: "Microsoft", rom: "WP 8.1", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/nokia-lumia-640-4g.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/nokia-lumia-640-4g.jpg"] },
+
+      // Nintendo
+      { id: 37, name: "Nintendo Switch (Mariko)", codename: "Mariko", brand: "Nintendo", rom: "Horizon OS", status: "Stock • Official", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Nintendo-Switch-wJoyCons-BlRd-Standing-FL.png", fallbacks: ["https://upload.wikimedia.org/wikipedia/commons/5/5e/Nintendo_Switch_Console.png", "https://upload.wikimedia.org/wikipedia/commons/8/88/Nintendo-Switch-wJoyCons-BlRd-Standing-FL.jpg"] },
+      { id: 38, name: "Nintendo 3DS (CTR)", codename: "CTR", brand: "Nintendo", rom: "Nintendo 3DS OS", status: "Stock • Official", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Nintendo-3DS-AquaOpen.png", fallbacks: ["https://upload.wikimedia.org/wikipedia/commons/f/f0/Nintendo-3DS-AquaOpen.jpg"] },
+      { id: 39, name: "Nintendo Wii U (JPN-32GB White)", codename: "WiiU", brand: "Nintendo", rom: "Wii U OS", status: "Stock • Official", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Wii_U_Console_and_Gamepad.png", fallbacks: ["https://upload.wikimedia.org/wikipedia/commons/6/68/Nintendo_Wii_U_Pro_Controller_Transparent.png", "https://upload.wikimedia.org/wikipedia/commons/d/dd/Nintendo-Wii-U-Console-FL.jpg"] },
+
+      // Nokia
+      { id: 40, name: "Nokia 6300", codename: "6300", brand: "Nokia", rom: "Symbian", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/nokia-6300.gif&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/nokia-6300.gif"] },
+      { id: 41, name: "Nokia N8", codename: "N8", brand: "Nokia", rom: "Symbian Belle - Reborn CFW", status: "Custom • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/nokia-n8-silver.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/nokia-n8-silver.jpg"] },
+      { id: 42, name: "Nokia N9", codename: "N9", brand: "Nokia", rom: "Meego Harmattan 1.3", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/Nokia-N9-00-cyan.jpg&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/Nokia-N9-00-cyan.jpg"] },
+
+      // Samsung
+      { id: 43, name: "Samsung Galaxy Note10+", codename: "d2s", brand: "Samsung", rom: "Android 16", status: "Stock • Official", imageUrl: "https://wiki.lineageos.org/images/devices/d2s.png", fallbacks: ["https://upload.wikimedia.org/wikipedia/commons/e/eb/Samsung_Galaxy_Note_10_Phone.png", "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg"] },
+      { id: 44, name: "Samsung Galaxy A73", codename: "a73xq", brand: "Samsung", rom: "UN1CA 3.1", status: "Custom • Official", imageUrl: "https://wiki.lineageos.org/images/devices/a73xq.png", fallbacks: ["https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a73-5g.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a73-5g.jpg"] },
+      { id: 45, name: "Samsung Galaxy Nexus", codename: "maguro", brand: "Samsung", rom: "Android 4.3", status: "Stock • Official", imageUrl: "https://wiki.lineageos.org/images/devices/maguro.png", fallbacks: ["https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-nexus-new.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-nexus-new.jpg"] },
+
+      // Sony Ericsson
+      { id: 46, name: "Sony Ericsson K510i", codename: "K510i", brand: "Sony Ericsson", rom: "Proprietary", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/sonyericsson-k510.gif&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/sonyericsson-k510.gif"] },
+      { id: 47, name: "Sony Ericsson W810", codename: "W810", brand: "Sony Ericsson", rom: "Proprietary", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/sonyericsson-w810.gif&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/sonyericsson-w810.gif"] },
+      { id: 48, name: "Sony Ericsson W810 (2)", codename: "W810", brand: "Sony Ericsson", rom: "Proprietary", status: "Stock • Official", imageUrl: "https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/sonyericsson-w810.gif&output=png", fallbacks: ["https://fdn2.gsmarena.com/vv/bigpic/sonyericsson-w810.gif"] },
+
+      // Xiaomi
+      { id: 49, name: "Xiaomi Redmi Note 8", codename: "ginkgo", brand: "Xiaomi", rom: "Android 10", status: "Stock • Official", imageUrl: "https://wiki.lineageos.org/images/devices/ginkgo.png", fallbacks: ["https://wsrv.nl/?url=fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-8-1.jpg&output=png", "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-8-1.jpg"] }
+    ];
+
+    const STORAGE_KEY = "ef_my_devices_png_v2";
+    let devices = [];
+
+    function loadDevices() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            devices = parsed;
+            return;
+          }
+        }
+      } catch (e) {}
+      devices = JSON.parse(JSON.stringify(DEFAULT_DEVICES));
+    }
+
+    function handleImageError(imgEl) {
+      const idx = parseInt(imgEl.getAttribute("data-device-idx"), 10);
+      const step = parseInt(imgEl.getAttribute("data-fallback-step") || "0", 10);
+      const dev = devices[idx];
+      if (dev && Array.isArray(dev.fallbacks) && step < dev.fallbacks.length) {
+        imgEl.setAttribute("data-fallback-step", String(step + 1));
+        imgEl.src = dev.fallbacks[step];
+      } else {
+        imgEl.onerror = null;
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById("devicesGrid");
+
+      document.getElementById("headerCountLabel").textContent = `${devices.length} Devices in Collection`;
+
+      grid.innerHTML = devices.map((d, idx) => `
+        <article class="device-card ef-glass-panel rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div>
+            <!-- Card Top Bar -->
+            <div class="px-4 pt-3.5 flex items-center justify-between">
+              <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-lg ef-subbox text-theme-secondary">
+                #${idx + 1} • ${escapeHtml(d.brand)}
+              </span>
+            </div>
+
+            <!-- Custom PNG Device Image Stage -->
+            <div class="px-4 py-4 flex items-center justify-center device-stage my-2 border-y min-h-[170px]" style="border-color: var(--subbox-border);">
+              <img
+                src="${escapeHtml(d.imageUrl)}"
+                alt="${escapeHtml(d.name)}"
+                data-device-idx="${idx}"
+                data-fallback-step="0"
+                loading="lazy"
+                class="h-36 w-auto max-w-full object-contain mx-auto drop-shadow-xl hover:scale-105 transition-transform"
+                onerror="handleImageError(this)"
+              />
+            </div>
+
+            <!-- Device Title & Codename Badge (No copy button) -->
+            <div class="px-4 pt-1">
+              <h3 class="text-base font-bold text-theme-primary leading-snug">${escapeHtml(d.name)}</h3>
+
+              <div class="mt-2 flex items-center justify-between ef-subbox rounded-xl px-3 py-2">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="text-xs font-bold text-theme-secondary">Codename:</span>
+                  <code class="text-xs font-mono font-bold text-purple-700 dark:text-purple-300 truncate">${escapeHtml(d.codename)}</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Software Info Box -->
+            <div class="px-4 pt-3 pb-4 text-xs">
+              <div class="ef-subbox rounded-xl p-2.5 space-y-1.5">
+                <div class="flex items-start justify-between gap-2">
+                  <span class="font-bold text-theme-secondary shrink-0">Software:</span>
+                  <span class="font-bold text-emerald-700 dark:text-emerald-300 text-right">${escapeHtml(d.rom)}</span>
+                </div>
+                <div class="flex items-start justify-between gap-2">
+                  <span class="font-bold text-theme-secondary shrink-0">Status:</span>
+                  <span class="font-bold text-sky-700 dark:text-sky-300 text-right">${escapeHtml(d.status || "Official")}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadDevices();
+      renderGrid();
+
+      document.getElementById("brandResetBtn").addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
